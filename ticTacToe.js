@@ -134,7 +134,11 @@ function GameController(playerOneName, playerTwoName){
     }
 }
 
-const game = GameController("Daniel", "Computer");
+function ScreenController(){
+    
+}
+
+//const game = GameController("Daniel", "Computer");
 /*
 game.playRound(0, 0);
 game.playRound(0, 1);
