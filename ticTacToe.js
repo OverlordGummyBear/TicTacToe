@@ -23,6 +23,8 @@ function GameBoard(){
 
         //Otherwise the cell is valid and a token is placed in the cell
         board[row][column].addToken(player);
+
+        return true; //tell that it was placed correctly
     };
 
     const printBoard = () => {
@@ -85,11 +87,11 @@ function GameController(playerOneName, playerTwoName){
     const playRound = (column, row) => {
         console.log(`Placing ${getActivePlayer().name}'s token into position (${column},${row})`)
     
-        board.placeToken(getActivePlayer().token, column, row);
+        const isSuccess = board.placeToken(getActivePlayer().token, column, row);
 
-        /* Winner logic*/
-
-        switchPlayerTurn();
+        if(isSuccess) switchPlayerTurn();
+        else console.log("Invalid placement. Try again!")
+        
         printNewRound();
     }
 
@@ -102,5 +104,6 @@ function GameController(playerOneName, playerTwoName){
 }
 
 const game = GameController("Daniel", "Computer");
-game.playRound(1, 1);
+game.playRound(0, 0);
+game.playRound(0, 0);
 
