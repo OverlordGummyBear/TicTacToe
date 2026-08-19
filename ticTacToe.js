@@ -60,14 +60,21 @@ function Cell(){
 
 function GameController(playerOneName, playerTwoName){
     const board = GameBoard();
+    const winningPlacements = [
+        ["0.0", "1.0", "2.0"], ["0.1", "1.1", "2.1"], ["0.2", "1.2", "2.2"],
+        ["0.0", "0.1", "0.2"], ["1.0", "1.1", "1.2"], ["2.0", "2.1", "2.2"],
+        ["0.0", "1.1", "2.2"], ["2.0", "1.1", "0.2"]
+    ]
     const players = [
         {
             name: playerOneName,
             token: "X",
+            occupiedSpaces: [],
         },
         {
             name: playerTwoName,
             token: "O",
+            occupiedSpaces: [],
         }
     ]
 
@@ -89,8 +96,27 @@ function GameController(playerOneName, playerTwoName){
     
         const isSuccess = board.placeToken(getActivePlayer().token, column, row);
 
-        if(isSuccess) switchPlayerTurn();
-        else console.log("Invalid placement. Try again!")
+        //Winner logic
+        if(isSuccess){
+            getActivePlayer().occupiedSpaces.push(`${column}.${row}`);
+
+            const isWinner = winningPlacements.some(array => {
+                return array.sort().join(",") === getActivePlayer().occupiedSpaces.sort().join(",");
+            });
+
+            if(isWinner){
+                console.log(`${getActivePlayer().name} has won the game!`)
+                return;
+            } else if(isWinner === undefined){
+                console.log("The game ended in a tie")
+            }
+            else {
+                switchPlayerTurn();
+            }
+        }
+        else{
+            console.log("Invalid placement. Try again!")
+        }
         
         printNewRound();
     }
@@ -105,5 +131,7 @@ function GameController(playerOneName, playerTwoName){
 
 const game = GameController("Daniel", "Computer");
 game.playRound(0, 0);
-game.playRound(0, 0);
-
+game.playRound(0, 1);
+game.playRound(1, 1);
+game.playRound(0, 2);
+game.playRound(2, 2);
