@@ -20,7 +20,8 @@ function GameBoard(){
 
         if(!availableCells.length) return; //return if no cells are available
 
-        if(board[row][column].getValue() !== "") return false; //return false if chosen cell is occupied
+        //player === "" allow to use placeToken to reset the board
+        if(board[row][column].getValue() !== "" && player !== "") return false; //return false if chosen cell is occupied
 
         //Otherwise the cell is valid and a token is placed in the cell
         board[row][column].addToken(player);
@@ -99,6 +100,27 @@ function GameController(playerOneName, playerTwoName){
         console.log(`${getActivePlayer().name}'s turn`)
     }
 
+    const newRound = () => {
+        players.forEach(player => {
+            player.occupiedSpaces = [];
+        })
+
+        board.getBoard().map((row, rowIndex) => 
+            row.map((cell, cellIndex) => {
+                board.placeToken("", cellIndex, rowIndex);
+                console.log(board.printBoard());
+            })
+        );
+
+        switchPlayerTurn();
+
+        isGameFinished = 0;
+    }
+
+    const resetGame = () => {
+
+    }
+
     const playRound = (column, row) => {
         console.log(`Placing ${getActivePlayer().name}'s token into position (${column},${row})`)
     
@@ -143,7 +165,8 @@ function GameController(playerOneName, playerTwoName){
         playRound,
         getBoard: board.getBoard,
         getIsGameFinished,
-        getPlayer
+        getPlayer,
+        newRound
     }
 }
 
@@ -152,11 +175,13 @@ function ScreenController(playerOne, playerTwo){
     const game = GameController(playerOne, playerTwo);
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
-    const scoreDiv = document.querySelector(".score")
+    const scoreDiv = document.querySelector(".score");
+    const buttonsDiv = document.querySelector(".buttons");
 
     const updateScreen = () => {
         boardDiv.textContent = ""; //clear the board
         scoreDiv.textContent = "";
+        buttonsDiv.textContent = "";
         
         //get the newest version of the board and player turn
         const board = game.getBoard();
@@ -176,6 +201,13 @@ function ScreenController(playerOne, playerTwo){
         player2Score.textContent = `${game.getPlayer(1).name}'s score: ${game.getPlayer(1).score}`
 
         scoreDiv.append(player1Score, player2Score);
+
+        //buttons
+        const newRoundButton = document.createElement("button");
+        newRoundButton.textContent = "New Round";
+        newRoundButton.value = "newRound";
+
+        buttonsDiv.appendChild(newRoundButton);
 
         //update board
         board.forEach((row, rIndex) => {
@@ -204,6 +236,17 @@ function ScreenController(playerOne, playerTwo){
         updateScreen();
     }
 
+    function clickHandlerButtons(e){
+        console.log(e.target.value);
+
+        if(e.target.value = "newRound"){
+            game.newRound();
+        } 
+
+        updateScreen();
+    }
+
+    buttonsDiv.addEventListener("click", clickHandlerButtons);
     boardDiv.addEventListener("click", clickHandlerBoard);
 
     updateScreen();
