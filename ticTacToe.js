@@ -112,14 +112,14 @@ function GameController(playerOneName, playerTwoName){
 
         if(isWinner){
             console.log(`${getActivePlayer().name} has won the game!`)
-            return;
+            return 1; //return 1 to show someone won
         } 
 
         const availableCells = board.getBoard().flat().filter((cell) => cell.getValue() === "");
 
         if(availableCells.length < 1){
             console.log("The game ended in a tie!")
-            return;
+            return -1; //return -1 to show nobody won
         }
 
         switchPlayerTurn();
@@ -139,6 +139,7 @@ function ScreenController(playerOne, playerTwo){
     const game = GameController(playerOne, playerTwo);
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
+    let isGameFinished = 0;
 
     const updateScreen = () => {
         boardDiv.textContent = ""; //clear the board
@@ -147,7 +148,12 @@ function ScreenController(playerOne, playerTwo){
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
 
-        playerTurnDiv.textContent = `${activePlayer.name}'s turn`
+        if(isGameFinished !== 0){
+            playerTurnDiv.textContent = isGameFinished === -1 ? "The game ended in a tie!" : `${activePlayer.name} won the round!`
+        }
+        else{
+            playerTurnDiv.textContent = `${activePlayer.name}'s turn`
+        }
 
         board.forEach((row, rIndex) => {
             row.forEach((cell, cIndex) => {
@@ -163,12 +169,17 @@ function ScreenController(playerOne, playerTwo){
     }
 
     function clickHandlerBoard(e){
+        if(isGameFinished !== 0) return;
+
         const selectedRow = e.target.dataset.rowIndex;
         const selectedColumn = e.target.dataset.cellIndex;
 
         if(!selectedColumn && !selectedRow) return; //Make sure column and row is clicked and not the gaps in between
 
-        game.playRound(selectedColumn, selectedRow);
+        let result = game.playRound(selectedColumn, selectedRow);
+
+        if(result === 1 || result === -1) isGameFinished = result;
+
         updateScreen();
     }
 
