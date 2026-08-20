@@ -55,3 +55,34 @@ body{
     border-radius: 8px;
     font-size: 16px;
 }
+
+form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 400px;
+    background-color: lightgrey;
+    padding: 25px 0px;
+    font-size: 24px;
+    border: solid grey 2px;
+}
+
+form > div{
+    display: flex;
+    gap: 20px;
+}
+
+input[type="text"]{
+    font-size: 22px;
+    width: 200px;
+}
+
+form > button{
+    font-size: 22px;
+    margin-top: 15px;
+    padding: 15px 50px;
+    border: 1px solid grey;
+    border-radius: 15px;
+}

@@ -130,8 +130,6 @@ function GameController(playerOneName, playerTwoName){
         const isSuccess = board.placeToken(getActivePlayer().token, column, row);
 
         if(!isSuccess){
-            //console.log("Invalid placement. Try again!")
-            //printNewRound();
             return;
         }
         
@@ -143,7 +141,6 @@ function GameController(playerOneName, playerTwoName){
         });
 
         if(isWinner){
-            //console.log(`${getActivePlayer().name} has won the game!`)
             isGameFinished = 1;
             getActivePlayer().score++;
             return;
@@ -152,7 +149,6 @@ function GameController(playerOneName, playerTwoName){
         const availableCells = board.getBoard().flat().filter((cell) => cell.getValue() === "");
 
         if(availableCells.length < 1){
-            //console.log("The game ended in a tie!")
             isGameFinished = -1;
             return;
         }
@@ -212,8 +208,8 @@ function ScreenController(playerOne, playerTwo){
         const resetButton = document.createElement("button");
         resetButton.textContent = "Reset Game";
         resetButton.value = "reset";
-
-        if(!playerOne === undefined || !playerTwo === undefined){
+        
+        if(playerOne !== undefined || playerTwo !== undefined){
             scoreDiv.append(player1Score, player2Score);
             buttonsDiv.append(newRoundButton, resetButton);
         }
@@ -265,4 +261,16 @@ function ScreenController(playerOne, playerTwo){
 }
 
 ScreenController();
+
+const form = document.querySelector("form");
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    ScreenController(playerOneName.value, playerTwoName.value);
+
+    form.style.display = "none";
+})
+
+
+
 
