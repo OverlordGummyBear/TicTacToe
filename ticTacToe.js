@@ -18,7 +18,7 @@ function GameBoard(){
         //Find all cells with nothing inside
         const availableCells = board.filter((row) => row[column].getValue() === "");
 
-        if(!availableCells.length) return; //return if no cells are available
+        if(!availableCells.length && player !== "") return; //return if no cells are available
 
         //player === "" allow to use placeToken to reset the board
         if(board[row][column].getValue() !== "" && player !== "") return false; //return false if chosen cell is occupied
