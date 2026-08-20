@@ -194,8 +194,8 @@ function ScreenController(playerOne, playerTwo){
         if(game.getIsGameFinished() !== 0){
             playerTurnDiv.textContent = game.getIsGameFinished() === -1 ? "The game ended in a tie!" : `${activePlayer.name} won the round!`
         }
-        else{
-            playerTurnDiv.textContent = `${activePlayer.name}'s turn`
+        else if(playerOne !== undefined|| playerTwo !== undefined){
+            playerTurnDiv.textContent = `${activePlayer.name}'s turn`;
         }
 
         //update score
@@ -203,8 +203,6 @@ function ScreenController(playerOne, playerTwo){
         const player2Score = document.createElement("p");
         player1Score.textContent = `${game.getPlayer(0).name}'s score: ${game.getPlayer(0).score}`
         player2Score.textContent = `${game.getPlayer(1).name}'s score: ${game.getPlayer(1).score}`
-
-        scoreDiv.append(player1Score, player2Score);
 
         //buttons
         const newRoundButton = document.createElement("button");
@@ -215,7 +213,10 @@ function ScreenController(playerOne, playerTwo){
         resetButton.textContent = "Reset Game";
         resetButton.value = "reset";
 
-        buttonsDiv.append(newRoundButton, resetButton);
+        if(!playerOne === undefined || !playerTwo === undefined){
+            scoreDiv.append(player1Score, player2Score);
+            buttonsDiv.append(newRoundButton, resetButton);
+        }
 
         //update board
         board.forEach((row, rIndex) => {
@@ -233,6 +234,7 @@ function ScreenController(playerOne, playerTwo){
 
     function clickHandlerBoard(e){
         if(game.getIsGameFinished() !== 0) return;
+        if(playerOne === undefined || playerTwo === undefined) return;
 
         const selectedRow = e.target.dataset.rowIndex;
         const selectedColumn = e.target.dataset.cellIndex;
@@ -262,25 +264,5 @@ function ScreenController(playerOne, playerTwo){
     updateScreen();
 }
 
-ScreenController("Daniel", "Computer");
+ScreenController();
 
-//const game = GameController("Daniel", "Computer");
-/*
-game.playRound(0, 0);
-game.playRound(0, 1);
-game.playRound(1, 1);
-game.playRound(0, 2);
-game.playRound(2, 2);
-*/
-
-/*
-game.playRound(0,0);
-game.playRound(0,1);
-game.playRound(0,2);
-game.playRound(1,0);
-game.playRound(1,1);
-game.playRound(1,2);
-game.playRound(2,0);
-game.playRound(2,1);
-game.playRound(2,2);
-*/
