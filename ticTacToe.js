@@ -1,3 +1,4 @@
+//Game board 
 function GameBoard(){
     const rows = 3;
     const columns = 3;
@@ -42,7 +43,7 @@ function GameBoard(){
     }
 }
 
-//A singular cell in the gameboard
+//A singular cell in the game board
 function Cell(){
     let value = "";
 
@@ -58,6 +59,7 @@ function Cell(){
     };
 }
 
+//Game controller
 function GameController(playerOneName, playerTwoName){
     const board = GameBoard();
     const winningPlacements = [
@@ -70,24 +72,27 @@ function GameController(playerOneName, playerTwoName){
             name: playerOneName,
             token: "X",
             occupiedSpaces: [],
+            score: 0,
         },
         {
             name: playerTwoName,
             token: "O",
             occupiedSpaces: [],
+            score: 0,
         }
     ]
     let isGameFinished = 0; //0 is unfinished, 1 is win and -1 is a tie
+    let activePlayer = players[0];
 
     const getIsGameFinished = () => isGameFinished;
-
-    let activePlayer = players[0];
 
     const switchPlayerTurn = () => {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     }
 
     const getActivePlayer = () => activePlayer;
+
+    const getPlayer = (playerIndex) => players[playerIndex];
 
     const printNewRound = () => {
         board.printBoard();
@@ -115,6 +120,7 @@ function GameController(playerOneName, playerTwoName){
         if(isWinner){
             //console.log(`${getActivePlayer().name} has won the game!`)
             isGameFinished = 1;
+            getActivePlayer().score++;
             return;
         } 
 
@@ -136,17 +142,21 @@ function GameController(playerOneName, playerTwoName){
         getActivePlayer,
         playRound,
         getBoard: board.getBoard,
-        getIsGameFinished
+        getIsGameFinished,
+        getPlayer
     }
 }
 
+//Screen controller
 function ScreenController(playerOne, playerTwo){
     const game = GameController(playerOne, playerTwo);
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
+    const scoreDiv = document.querySelector(".score")
 
     const updateScreen = () => {
         boardDiv.textContent = ""; //clear the board
+        scoreDiv.textContent = "";
         
         //get the newest version of the board and player turn
         const board = game.getBoard();
@@ -159,6 +169,15 @@ function ScreenController(playerOne, playerTwo){
             playerTurnDiv.textContent = `${activePlayer.name}'s turn`
         }
 
+        //update score
+        const player1Score = document.createElement("p");
+        const player2Score = document.createElement("p");
+        player1Score.textContent = `${game.getPlayer(0).name}'s score: ${game.getPlayer(0).score}`
+        player2Score.textContent = `${game.getPlayer(1).name}'s score: ${game.getPlayer(1).score}`
+
+        scoreDiv.append(player1Score, player2Score);
+
+        //update board
         board.forEach((row, rIndex) => {
             row.forEach((cell, cIndex) => {
                 const cellButton = document.createElement("button");
