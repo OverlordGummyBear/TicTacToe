@@ -36,6 +36,20 @@ body{
 .score{
     display: flex;
     justify-content: space-between;
+    font-size: 18px;
 
     width: 400px;
+}
+
+.buttons{
+    display: flex;
+    gap: 50px;
+    margin-top: 10px;
+}
+
+.buttons > button{
+    padding: 10px 20px;
+    border: 1px solid grey;
+    border-radius: 8px;
+    font-size: 16px;
 }
