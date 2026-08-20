@@ -101,14 +101,13 @@ function GameController(playerOneName, playerTwoName){
     }
 
     const newRound = () => {
-        players.forEach(player => {
-            player.occupiedSpaces = [];
-        })
+        players.forEach(player =>
+            player.occupiedSpaces = []
+        )
 
         board.getBoard().map((row, rowIndex) => 
             row.map((cell, cellIndex) => {
                 board.placeToken("", cellIndex, rowIndex);
-                console.log(board.printBoard());
             })
         );
 
@@ -118,7 +117,11 @@ function GameController(playerOneName, playerTwoName){
     }
 
     const resetGame = () => {
+        newRound();
 
+        players.forEach(player => 
+            player.score = 0
+        )
     }
 
     const playRound = (column, row) => {
@@ -138,8 +141,6 @@ function GameController(playerOneName, playerTwoName){
         const isWinner = winningPlacements.some(winArray => {
             return winArray.every((cell) => getActivePlayer().occupiedSpaces.includes(cell));
         });
-
-        console.log(isWinner);
 
         if(isWinner){
             //console.log(`${getActivePlayer().name} has won the game!`)
@@ -168,7 +169,8 @@ function GameController(playerOneName, playerTwoName){
         getBoard: board.getBoard,
         getIsGameFinished,
         getPlayer,
-        newRound
+        newRound,
+        resetGame,
     }
 }
 
@@ -209,7 +211,11 @@ function ScreenController(playerOne, playerTwo){
         newRoundButton.textContent = "New Round";
         newRoundButton.value = "newRound";
 
-        buttonsDiv.appendChild(newRoundButton);
+        const resetButton = document.createElement("button");
+        resetButton.textContent = "Reset Game";
+        resetButton.value = "reset";
+
+        buttonsDiv.append(newRoundButton, resetButton);
 
         //update board
         board.forEach((row, rIndex) => {
@@ -241,9 +247,11 @@ function ScreenController(playerOne, playerTwo){
     function clickHandlerButtons(e){
         console.log(e.target.value);
 
-        if(e.target.value = "newRound"){
+        if(e.target.value === "newRound"){
             game.newRound();
-        } 
+        } else {
+            game.resetGame();
+        }
 
         updateScreen();
     }
