@@ -77,7 +77,9 @@ function GameController(playerOneName, playerTwoName){
             occupiedSpaces: [],
         }
     ]
-    let isGameFinished = false;
+    let isGameFinished = 0; //0 is unfinished, 1 is win and -1 is a tie
+
+    const getIsGameFinished = () => isGameFinished;
 
     let activePlayer = players[0];
 
@@ -98,7 +100,7 @@ function GameController(playerOneName, playerTwoName){
         const isSuccess = board.placeToken(getActivePlayer().token, column, row);
 
         if(!isSuccess){
-            console.log("Invalid placement. Try again!")
+            //console.log("Invalid placement. Try again!")
             printNewRound();
             return;
         }
@@ -111,15 +113,17 @@ function GameController(playerOneName, playerTwoName){
         });
 
         if(isWinner){
-            console.log(`${getActivePlayer().name} has won the game!`)
-            return 1; //return 1 to show someone won
+            //console.log(`${getActivePlayer().name} has won the game!`)
+            isGameFinished = 1;
+            return;
         } 
 
         const availableCells = board.getBoard().flat().filter((cell) => cell.getValue() === "");
 
         if(availableCells.length < 1){
-            console.log("The game ended in a tie!")
-            return -1; //return -1 to show nobody won
+            //console.log("The game ended in a tie!")
+            isGameFinished = -1;
+            return;
         }
 
         switchPlayerTurn();
@@ -132,6 +136,7 @@ function GameController(playerOneName, playerTwoName){
         getActivePlayer,
         playRound,
         getBoard: board.getBoard,
+        getIsGameFinished
     }
 }
 
@@ -139,7 +144,6 @@ function ScreenController(playerOne, playerTwo){
     const game = GameController(playerOne, playerTwo);
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
-    let isGameFinished = 0;
 
     const updateScreen = () => {
         boardDiv.textContent = ""; //clear the board
@@ -148,8 +152,8 @@ function ScreenController(playerOne, playerTwo){
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
 
-        if(isGameFinished !== 0){
-            playerTurnDiv.textContent = isGameFinished === -1 ? "The game ended in a tie!" : `${activePlayer.name} won the round!`
+        if(game.getIsGameFinished() !== 0){
+            playerTurnDiv.textContent = game.getIsGameFinished() === -1 ? "The game ended in a tie!" : `${activePlayer.name} won the round!`
         }
         else{
             playerTurnDiv.textContent = `${activePlayer.name}'s turn`
@@ -169,16 +173,14 @@ function ScreenController(playerOne, playerTwo){
     }
 
     function clickHandlerBoard(e){
-        if(isGameFinished !== 0) return;
+        if(game.getIsGameFinished() !== 0) return;
 
         const selectedRow = e.target.dataset.rowIndex;
         const selectedColumn = e.target.dataset.cellIndex;
 
-        if(!selectedColumn && !selectedRow) return; //Make sure column and row is clicked and not the gaps in between
+        if(!selectedColumn || !selectedRow) return; //Make sure column and row is clicked and not the gaps in between
 
-        let result = game.playRound(selectedColumn, selectedRow);
-
-        if(result === 1 || result === -1) isGameFinished = result;
+        game.playRound(selectedColumn, selectedRow);
 
         updateScreen();
     }
