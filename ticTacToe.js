@@ -281,7 +281,3 @@ function ScreenController(){
 }
 
 ScreenController();
-
-
-
-
