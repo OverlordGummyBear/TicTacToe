@@ -119,13 +119,14 @@ function GameController(playerOneName, playerTwoName){
     const resetGame = () => {
         newRound();
 
-        players.forEach(player => 
-            player.score = 0
-        )
+        players.forEach(player => {
+            player.score = 0;
+            player.name = undefined;            
+        })
     }
 
     const playRound = (column, row) => {
-        console.log(`Placing ${getActivePlayer().name}'s token into position (${column},${row})`)
+        //console.log(`Placing ${getActivePlayer().name}'s token into position (${column},${row})`)
     
         const isSuccess = board.placeToken(getActivePlayer().token, column, row);
 
@@ -154,10 +155,7 @@ function GameController(playerOneName, playerTwoName){
         }
 
         switchPlayerTurn();
-        printNewRound();
     }
-
-    printNewRound();
 
     return {
         getActivePlayer,
@@ -171,12 +169,17 @@ function GameController(playerOneName, playerTwoName){
 }
 
 //Screen controller
-function ScreenController(playerOne, playerTwo){
-    const game = GameController(playerOne, playerTwo);
+function ScreenController(){
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
     const scoreDiv = document.querySelector(".score");
     const buttonsDiv = document.querySelector(".buttons");
+    const form = document.querySelector("form");
+
+    //Mutable per-game state
+    let playerOne;
+    let playerTwo;
+    let game = GameController(playerOne, playerTwo)
 
     const updateScreen = () => {
         boardDiv.textContent = ""; //clear the board
@@ -190,7 +193,7 @@ function ScreenController(playerOne, playerTwo){
         if(game.getIsGameFinished() !== 0){
             playerTurnDiv.textContent = game.getIsGameFinished() === -1 ? "The game ended in a tie!" : `${activePlayer.name} won the round!`
         }
-        else if(playerOne !== undefined|| playerTwo !== undefined){
+        else if(playerOne !== undefined || playerTwo !== undefined){            
             playerTurnDiv.textContent = `${activePlayer.name}'s turn`;
         }
 
@@ -208,7 +211,7 @@ function ScreenController(playerOne, playerTwo){
         const resetButton = document.createElement("button");
         resetButton.textContent = "Reset Game";
         resetButton.value = "reset";
-        
+
         if(playerOne !== undefined || playerTwo !== undefined){
             scoreDiv.append(player1Score, player2Score);
             buttonsDiv.append(newRoundButton, resetButton);
@@ -243,16 +246,33 @@ function ScreenController(playerOne, playerTwo){
     }
 
     function clickHandlerButtons(e){
-        console.log(e.target.value);
-
         if(e.target.value === "newRound"){
             game.newRound();
-        } else {
-            game.resetGame();
+
+            updateScreen();
+        } else if(e.target.value === "reset"){
+            game = null;
+            form.reset();
+
+            form.style.display = "flex";
+            playerTurnDiv.textContent = "";
+
+            ScreenController();
         }
+    }
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        
+        playerOne = playerOneName.value;
+        playerTwo = playerTwoName.value;
+
+        game = GameController(playerOne, playerTwo);
+
+        form.style.display = "none";
 
         updateScreen();
-    }
+    })
 
     buttonsDiv.addEventListener("click", clickHandlerButtons);
     boardDiv.addEventListener("click", clickHandlerBoard);
@@ -261,15 +281,6 @@ function ScreenController(playerOne, playerTwo){
 }
 
 ScreenController();
-
-const form = document.querySelector("form");
-form.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    ScreenController(playerOneName.value, playerTwoName.value);
-
-    form.style.display = "none";
-})
 
 
 
