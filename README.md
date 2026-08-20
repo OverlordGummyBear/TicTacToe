@@ -7,6 +7,9 @@ A simple Tic Tac Toe game built with vanilla HTML, CSS, and JavaScript, using th
 - Win and tie detection
 - New Round and Reset Game controls
 
+## Live Demo
+Live Demo: https://overlordgummybear.github.io/TicTacToe/
+
 ## Getting Started
 Clone the repo and open `index.html` in your browser.
 ```bash
