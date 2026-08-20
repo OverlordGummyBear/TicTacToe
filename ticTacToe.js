@@ -128,16 +128,18 @@ function GameController(playerOneName, playerTwoName){
 
         if(!isSuccess){
             //console.log("Invalid placement. Try again!")
-            printNewRound();
+            //printNewRound();
             return;
         }
         
         //Winner logic
         getActivePlayer().occupiedSpaces.push(`${column}.${row}`);
 
-        const isWinner = winningPlacements.some(array => {
-            return array.sort().join(",") === getActivePlayer().occupiedSpaces.sort().join(",");
+        const isWinner = winningPlacements.some(winArray => {
+            return winArray.every((cell) => getActivePlayer().occupiedSpaces.includes(cell));
         });
+
+        console.log(isWinner);
 
         if(isWinner){
             //console.log(`${getActivePlayer().name} has won the game!`)
