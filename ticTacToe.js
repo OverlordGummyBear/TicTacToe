@@ -130,13 +130,54 @@ function GameController(playerOneName, playerTwoName){
 
     return {
         getActivePlayer,
-        playRound
+        playRound,
+        getBoard: board.getBoard,
     }
 }
 
-function ScreenController(){
-    
+function ScreenController(playerOne, playerTwo){
+    const game = GameController(playerOne, playerTwo);
+    const playerTurnDiv = document.querySelector(".turn");
+    const boardDiv = document.querySelector(".board");
+
+    const updateScreen = () => {
+        boardDiv.textContent = ""; //clear the board
+        
+        //get the newest version of the board and player turn
+        const board = game.getBoard();
+        const activePlayer = game.getActivePlayer();
+
+        playerTurnDiv.textContent = `${activePlayer.name}'s turn`
+
+        board.forEach((row, rIndex) => {
+            row.forEach((cell, cIndex) => {
+                const cellButton = document.createElement("button");
+                cellButton.classList.add("cell");
+
+                cellButton.dataset.rowIndex = rIndex;
+                cellButton.dataset.cellIndex = cIndex;
+                cellButton.textContent = cell.getValue();
+                boardDiv.appendChild(cellButton);
+            })
+        });
+    }
+
+    function clickHandlerBoard(e){
+        const selectedRow = e.target.dataset.rowIndex;
+        const selectedColumn = e.target.dataset.cellIndex;
+
+        if(!selectedColumn && !selectedRow) return; //Make sure column and row is clicked and not the gaps in between
+
+        game.playRound(selectedColumn, selectedRow);
+        updateScreen();
+    }
+
+    boardDiv.addEventListener("click", clickHandlerBoard);
+
+    updateScreen();
 }
+
+ScreenController("Daniel", "Computer");
 
 //const game = GameController("Daniel", "Computer");
 /*
